@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>
+            文件上传表单
+        </title>
+        <link href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+            <script src="https://cdn.bootcss.com/jquery/2.1.1/jquery.min.js">
+            </script>
+            <script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js">
+            </script>
+        </link>
+    </head>
+    <body>
+        <h3>
+            文件上传：
+        </h3>
+        选择一个文件上传:
+        <br/>
+        <form action="/file_upload" enctype="multipart/form-data" method="post">
+            <input class="form-control" name="image" size="50" type="file"/>
+            <br/>
+            <input type="submit" value="上传文件"/>
+        </form>
+    </body>
+</html>

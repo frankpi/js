@@ -125,7 +125,7 @@ var computerAI = function() {
                         } else if (computerWin[k] == 3) {
                             computerScore[i][j] += 2200;
                         } else if (computerWin[k] == 4) {
-                            computerScore[i][j] += 12000;
+                            computerScore[i][j] += 20000;
                         }
                     }
                 }
@@ -134,7 +134,7 @@ var computerAI = function() {
                     u = i;
                     v = j;
                 } else if (mySocre[i][j] == max) {
-                    if (computerScore[i][j] > computerScore[u]) {
+                    if (computerScore[i][j] > computerScore[u][v]) {
                         u = i;
                         v = j;
                     }
@@ -144,7 +144,7 @@ var computerAI = function() {
                     u = i;
                     v = j;
                 } else if (computerScore[i][j] == max) {
-                    if (mySocre[i][j] > mySocre[u]) {
+                    if (mySocre[i][j] > mySocre[u][v]) {
                         u = i;
                         v = j;
                     }
@@ -199,4 +199,5 @@ chess.onclick = function(e) {
         }
     }
 }
+
 logo.onload();

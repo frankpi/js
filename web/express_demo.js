@@ -1,9 +1,47 @@
-// npm install xlsx -save
+var express = require('express');
+var app = express();
+var fs = require("fs");
+var bodyParser = require('body-parser');
+var multer = require('multer');
+app.use(express.static('public'));
+app.use(bodyParser.urlencoded({
+    extended: false
+}));
+app.use(multer({
+    dest: '/tmp/'
+}).array('image'));
+app.get('/index.html', function(req, res) {
+    res.sendFile(__dirname + "/" + "index.html");
+})
+app.post('/file_upload', function(req, res) {
+    console.log(req.files[0]); // 上传的文件信息
+    var des_file = __dirname + "/" + req.files[0].originalname;
+    fs.readFile(req.files[0].path, function(err, data) {
+        fs.writeFile(des_file, data, function(err) {
+            if (err) {
+                console.log(err);
+            } else {
+                response = {
+                    message: 'File uploaded successfully',
+                };
+            }
+            console.log(response);
+            res.end(JSON.stringify(response));
+        });
+    });
+    res.end(parXlsx(req.files[0].originalname));
+})
+var server = app.listen(8081, function() {
+    var host = server.address().address
+    var port = server.address().port
+    console.log("应用实例，访问地址为 http://%s:%s", host, port)
+})
 
-
+function parXlsx(filename) {
+    // npm install xlsx -save
     var xl = require('xlsx');
     //workbook 对象，指的是整份 Excel 文档。我们在使用 js-xlsx 读取 Excel 文档之后就会获得 workbook 对象。
-    var workbook = xl.readFile("/Users/ljp/nodejs/海外mod2.xlsx")
+    var workbook = xl.readFile(filename);
     // 获取 Excel 中所有表名
     const sheetNames = workbook.SheetNames; // 返回 ['sheet1', 'sheet2']
     // 根据表名获取对应某张表
@@ -23,18 +61,13 @@
             break;
         }
         console.log(i);
-        i++;
         console.log(row);
-        // console.log(row['github账号']);
-        if (row['github账号'] != undefined) {
-            author = row['github账号']
-        }
-        if (author.indexOf('-')) {
-            author = author.substring(0,author.indexOf('-'));
-
-        }
+        i++;
+        if (row["github账号"]) {
+            author = row['github账号'];
+        };
         // if (row['游戏'] == "Pokemon Quest") {
-        //     // continue;
+        //     continue;
         // }
         var vc = row['Modzvc'] ? row['Modzvc'] : 1;
         var changelog0 = {
@@ -63,3 +96,5 @@
     }
     var jsonStr2 = JSON.stringify(jsArray, null, 2);
     console.log(jsonStr2);
+    return jsonStr2;
+}

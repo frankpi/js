@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<title>
+    文件上传表单
+</title>
+<body>
+    <h3>
+        文件上传：
+    </h3>
+    选择一个文件上传:
+    <br/>
+    <input onchange="importf(this)" size="50" type="file"/>
+    <br/>
+    <div id="demo">
+    </div>
+    <script src="http://oss.sheetjs.com/js-xlsx/xlsx.core.min.js">
+    </script>
+    <script type="text/javascript">
+        var workbook;//读取完成的数据
+        var rABS = false; //是否将文件读取为二进制字符串
+        function importf(obj) {
+                if(!obj.files) {
+                    return;
+                }
+                var f = obj.files[0];
+                var reader = new FileReader();
+                reader.onload = function(e) {
+                    var data = e.target.result;
+                    if(rABS) {
+                        workbook = XLSX.read(btoa(fixdata(data)), {//手动转化
+                            type: 'base64'
+                        });
+                    } else {
+                        workbook = XLSX.read(data, {
+                            type: 'binary'
+                        });
+                    }
+                    //workbook.SheetNames[0]是获取Sheets中第一个Sheet的名字
+                    //workbook.Sheets[Sheet名]获取第一个Sheet的数据
+
+                    // var workbook = XLSX.readFile(f);
+
+				    // 获取 Excel 中所有表名
+				    const sheetNames = workbook.SheetNames; // 返回 ['sheet1', 'sheet2']
+				    // 根据表名获取对应某张表
+				    const ws = workbook.Sheets[sheetNames[2]];
+				    //返回json数据
+				    var dataa = XLSX.utils.sheet_to_json(ws);
+				    // console.log(dataa);
+				    var author;
+				    var jsArray = new Array();
+				    var index = 0;
+				    var i = 0;
+				    var row = dataa[0];
+				    // console.log(row['游戏']);
+				    while (row) {
+				        row = dataa[index + i];
+				        if (!row) {
+				            break;
+				        }
+				        console.log(i);
+				        i++;
+				        console.log(row);
+				        // console.log(row['github账号']);
+				        if (row['github账号'] != undefined) {
+				            author = row['github账号'];
+				        };
+				        // if (row['游戏'] == "Pokemon Quest") {
+				        //     // continue;
+				        // }
+				        var vc = row['Modzvc'] ? row['Modzvc'] : 1;
+				        var changelog0 = {
+				            versionCode: vc,
+				            versionName: "1.0." + vc,
+				            whatsNew: "support game version (*)"
+				        };
+				        var jsObj = {
+				            modz: "https://github.com/" + author + "/modz/raw/master/" + row['mod包名'] + "/" + row['mod包名'] + ".modz",
+				            readme: "https://github.com/" + author + "/modz/raw/master/" + row['mod包名'] + "/README.md",
+				            desc: row['mod介绍'],
+				            name: row['mod名字'],
+				            pkgName: row['mod包名'],
+				            versionCode: vc,
+				            versionName: "1.0." + vc,
+				            target: row['游戏包名'],
+				            support: "*",
+				            gameName: row['游戏'],
+				            iconUrl: "",
+				            changelog: [changelog0],
+				            screenshotUrl: ["https://github.com/" + author + "/modz/raw/master/" + row['mod包名'] + "/screenshot/modz.jpg"],
+				            videoUrl: [""],
+				            gameDownloadUrl: ["http://play.google.com/store/apps/details?id=" + row['游戏包名']]
+				        };
+				        jsArray.push(jsObj);
+				    }
+				    var jsonStr2 = JSON.stringify(jsArray, null, 2);
+				    console.log(jsonStr2);
+				    document.getElementById("demo").innerHTML=jsonStr2;
+                    // document.getElementById("demo").innerHTML= JSON.stringify( XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]]) );
+                }
+                
+                if(rABS) {
+                    reader.readAsArrayBuffer(f);
+                } else {
+                    reader.readAsBinaryString(f);
+                }
+            
+ 
+	            function fixdata(data) { //文件流转BinaryString
+	                var o = "",
+	                    l = 0,
+	                    w = 10240;
+	                for(; l < data.byteLength / w; ++l) o += String.fromCharCode.apply(null, new Uint8Array(data.slice(l * w, l * w + w)));
+	                o += String.fromCharCode.apply(null, new Uint8Array(data.slice(l * w)));
+	                return o;
+	            }
+
+		    }
+    </script>
+</body>
